@@ -8,15 +8,23 @@ const App = () => {
   const [showConsent, setShowConsent] = useState(false);
 
   useEffect(() => {
+    localStorage.removeItem('consentGiven'); // ← 一時的に追加
     if (!localStorage.getItem('consentGiven')) {
       setShowConsent(true);
     }
   }, []);
 
   const handleConsent = () => {
-    localStorage.setItem('consentGiven', 'true');
-    setShowConsent(false);
+    try {
+      localStorage.setItem('consentGiven', 'true');
+      requestAnimationFrame(() => {
+        setShowConsent(false);
+      });
+    } catch (err) {
+      console.error('localStorage error:', err);
+    }
   };
+  
 
   const sendMessage = async () => {
     const newMessages = [...messages, { role: 'user', content: input }];
